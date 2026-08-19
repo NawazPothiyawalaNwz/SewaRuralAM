@@ -49,42 +49,42 @@
 
     <FlyoutItem x:Name="DashboardFlyoutItem" Title="Dashboard">
         <FlyoutItem.Icon>
-            <FontImageSource FontFamily="MaterialIcons" Glyph="{x:Static controls:IconGlyphs.Dashboard}" Color="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource PrimaryDark}}" Size="22" />
+            <FontImageSource FontFamily="MaterialIcons" Glyph="{x:Static controls:IconGlyphs.Dashboard}" Color="White" Size="22" />
         </FlyoutItem.Icon>
         <ShellContent Route="DashboardPage" ContentTemplate="{DataTemplate views:DashboardPage}" />
     </FlyoutItem>
 
     <FlyoutItem x:Name="AssetsFlyoutItem" Title="Assets">
         <FlyoutItem.Icon>
-            <FontImageSource FontFamily="MaterialIcons" Glyph="{x:Static controls:IconGlyphs.Inventory}" Color="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource PrimaryDark}}" Size="22" />
+            <FontImageSource FontFamily="MaterialIcons" Glyph="{x:Static controls:IconGlyphs.Inventory}" Color="White" Size="22" />
         </FlyoutItem.Icon>
         <ShellContent Route="AssetListPage" ContentTemplate="{DataTemplate views:AssetListPage}" />
     </FlyoutItem>
 
     <FlyoutItem x:Name="LocationsFlyoutItem" Title="Locations">
         <FlyoutItem.Icon>
-            <FontImageSource FontFamily="MaterialIcons" Glyph="{x:Static controls:IconGlyphs.Place}" Color="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource PrimaryDark}}" Size="22" />
+            <FontImageSource FontFamily="MaterialIcons" Glyph="{x:Static controls:IconGlyphs.Place}" Color="White" Size="22" />
         </FlyoutItem.Icon>
         <ShellContent Route="LocationTreePage" ContentTemplate="{DataTemplate views:LocationTreePage}" />
     </FlyoutItem>
 
     <FlyoutItem x:Name="QrFlyoutItem" Title="QR Verification">
         <FlyoutItem.Icon>
-            <FontImageSource FontFamily="MaterialIcons" Glyph="{x:Static controls:IconGlyphs.QrCodeScanner}" Color="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource PrimaryDark}}" Size="22" />
+            <FontImageSource FontFamily="MaterialIcons" Glyph="{x:Static controls:IconGlyphs.QrCodeScanner}" Color="White" Size="22" />
         </FlyoutItem.Icon>
         <ShellContent Route="QrScannerPage" ContentTemplate="{DataTemplate views:QrScannerPage}" />
     </FlyoutItem>
 
     <FlyoutItem x:Name="ReportsFlyoutItem" Title="Reports">
         <FlyoutItem.Icon>
-            <FontImageSource FontFamily="MaterialIcons" Glyph="{x:Static controls:IconGlyphs.Description}" Color="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource PrimaryDark}}" Size="22" />
+            <FontImageSource FontFamily="MaterialIcons" Glyph="{x:Static controls:IconGlyphs.Description}" Color="White" Size="22" />
         </FlyoutItem.Icon>
         <ShellContent Route="ReportsPage" ContentTemplate="{DataTemplate views:ReportsPage}" />
     </FlyoutItem>
 
     <FlyoutItem x:Name="AdminFlyoutItem" Title="Administration">
         <FlyoutItem.Icon>
-            <FontImageSource FontFamily="MaterialIcons" Glyph="{x:Static controls:IconGlyphs.AdminPanelSettings}" Color="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource PrimaryDark}}" Size="22" />
+            <FontImageSource FontFamily="MaterialIcons" Glyph="{x:Static controls:IconGlyphs.AdminPanelSettings}" Color="White" Size="22" />
         </FlyoutItem.Icon>
         <Tab x:Name="UsersTab" Title="Users &amp; Roles">
             <ShellContent Route="UserListPage" ContentTemplate="{DataTemplate views:UserListPage}" />

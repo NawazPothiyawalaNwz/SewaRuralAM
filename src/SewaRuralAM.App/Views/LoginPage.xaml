@@ -13,8 +13,8 @@
         <Grid Padding="20" RowDefinitions="*,Auto,*" MinimumHeightRequest="640">
             <Frame Grid.Row="1"
                    MaximumWidthRequest="380"
-                   HorizontalOptions="Center"
-                   Padding="32"
+                   HorizontalOptions="Fill"
+                   Padding="28,32"
                    CornerRadius="18"
                    HasShadow="True"
                    BorderColor="Transparent"

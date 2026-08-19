@@ -10,7 +10,7 @@
     Title="Users &amp; Roles">
 
     <ContentPage.ToolbarItems>
-        <ToolbarItem Text="Add" Command="{Binding AddUserCommand}">
+        <ToolbarItem Text="Add" Command="{Binding AddUserCommand}" IsEnabled="{Binding CanAdd}">
             <ToolbarItem.IconImageSource>
                 <FontImageSource FontFamily="MaterialIcons" Glyph="{x:Static controls:IconGlyphs.Add}" Color="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource PrimaryDark}}" Size="22" />
             </ToolbarItem.IconImageSource>

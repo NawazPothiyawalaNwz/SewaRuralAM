@@ -27,6 +27,15 @@ public interface IMenuRightsService
 {
     Task<List<Menu>> GetAuthorizedMenusAsync(int userId);
     Task<MenuRight?> GetEffectiveRightsAsync(int userId, int menuId);
+    Task<MenuRight?> GetEffectiveRightsForRouteAsync(int userId, string route);
+}
+
+// Resolves the current signed-in user's effective CRUD rights for a page, so ViewModels can gate
+// Add/Edit/Delete/Print actions the same way AppShell already gates menu visibility. Always returns
+// a MenuRight (all-false when nothing applies) so callers never need a null check.
+public interface IMenuAccessService
+{
+    Task<MenuRight> GetRightsAsync(string route);
 }
 
 public interface IQrCodeService

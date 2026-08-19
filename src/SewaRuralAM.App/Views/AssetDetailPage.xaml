@@ -101,18 +101,18 @@
             </Frame>
 
             <HorizontalStackLayout Spacing="10">
-                <Button Text="Save" Command="{Binding SaveCommand}">
+                <Button Text="Save" Command="{Binding SaveCommand}" IsEnabled="{Binding CanSave}">
                     <Button.ImageSource>
                         <FontImageSource FontFamily="MaterialIcons" Glyph="{x:Static controls:IconGlyphs.Save}" Color="White" Size="16" />
                     </Button.ImageSource>
                 </Button>
-                <Button Text="Verify" Command="{Binding VerifyCommand}" Style="{StaticResource SecondaryButton}"
+                <Button Text="Verify" Command="{Binding VerifyCommand}" Style="{StaticResource SecondaryButton}" IsEnabled="{Binding CanEdit}"
                         IsVisible="{Binding IsNewAsset, Converter={StaticResource InvertBoolConverter}}">
                     <Button.ImageSource>
                         <FontImageSource FontFamily="MaterialIcons" Glyph="{x:Static controls:IconGlyphs.CheckCircle}" Color="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource PrimaryDark}}" Size="16" />
                     </Button.ImageSource>
                 </Button>
-                <Button Text="Delete" Command="{Binding DeleteCommand}" Style="{StaticResource DangerButton}"
+                <Button Text="Delete" Command="{Binding DeleteCommand}" Style="{StaticResource DangerButton}" IsEnabled="{Binding CanDelete}"
                         IsVisible="{Binding IsNewAsset, Converter={StaticResource InvertBoolConverter}}">
                     <Button.ImageSource>
                         <FontImageSource FontFamily="MaterialIcons" Glyph="{x:Static controls:IconGlyphs.Delete}" Color="White" Size="16" />

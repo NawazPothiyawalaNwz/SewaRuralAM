@@ -9,12 +9,12 @@
     Title="Locations">
 
     <ContentPage.ToolbarItems>
-        <ToolbarItem Text="Add Root" Command="{Binding AddLocationCommand}">
+        <ToolbarItem Text="Add Root" Command="{Binding AddLocationCommand}" IsEnabled="{Binding CanAdd}">
             <ToolbarItem.IconImageSource>
                 <FontImageSource FontFamily="MaterialIcons" Glyph="{x:Static controls:IconGlyphs.Add}" Color="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource PrimaryDark}}" Size="22" />
             </ToolbarItem.IconImageSource>
         </ToolbarItem>
-        <ToolbarItem Text="Print QR" Command="{Binding OpenQrPrintCommand}">
+        <ToolbarItem Text="Print QR" Command="{Binding OpenQrPrintCommand}" IsEnabled="{Binding CanPrint}">
             <ToolbarItem.IconImageSource>
                 <FontImageSource FontFamily="MaterialIcons" Glyph="{x:Static controls:IconGlyphs.QrCode}" Color="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource PrimaryDark}}" Size="22" />
             </ToolbarItem.IconImageSource>

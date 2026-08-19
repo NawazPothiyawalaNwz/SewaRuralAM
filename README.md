@@ -58,18 +58,20 @@ iOS requires a paired Mac build host (standard MAUI requirement); build-only com
 
 Seeded on first run (`DbInitializer.SeedAsync`):
 
-- **User name:** `admin`
-- **Password:** `Admin@123`
-- **Role:** Administrator (full menu rights)
+- **User name:** `admin` / **Password:** `Admin@123` / **Role:** Administrator (full menu rights)
+- **User name:** `manager` / **Password:** `Manager@123` / **Role:** Manager (add/edit menu rights, no delete/print on most menus)
+- **User name:** `viewer` / **Password:** `Viewer@123` / **Role:** Viewer (read-only menu rights)
 
-The SQLite database file is created at `FileSystem.AppDataDirectory/sewarural.db` on first launch — no manual setup needed.
+Sample data for manual QA is also seeded: 3 full 6-level location branches (Head Office → Building A → 2 floors → rooms → racks → shelves, plus a Warehouse branch), 8 assets spread across all 3 categories and every status (including Under Repair and Disposed), and verification history for several assets/locations so the Dashboard charts and verification reports have real data to show immediately.
+
+The SQLite database file is created at `FileSystem.AppDataDirectory/sewarural.db` on first launch — no manual setup needed. Delete it (plus the `-wal`/`-shm` files alongside it) to force reseeding on next launch.
 
 ## Feature status
 
 ### Done
 - Login, Change Password, Forgot Password (token-based reset). Signing in starts a **persistent session that survives an app restart and stays active until explicit Logout** (flyout footer) — this is unconditional, not gated by the Remember Me checkbox.
 - Role-based **and** user-level Menu Rights (user-level rights override role-level for the same menu), enforced live against the Shell flyout — menus a user isn't authorized for are hidden, not just disabled. Menu Rights page supports editing both modes, with a searchable Role/User picker.
-- Dashboard: 4 clickable stat cards (Total Assets, Total Locations, Verified, Pending) + Assets-by-Category / Assets-by-Location bar charts, drawn on a `GraphicsView` (`Controls/BarChartView.cs`) rather than laid out with data-bound XAML, so rendering can't silently fail the way a bound `CollectionView`/`BoxView` combination can (see "Bugs found" below for why that mattered)
+- Dashboard: 4 clickable stat cards (Total Assets, Total Locations, Verified, Pending) in a responsive 2x2 grid, + Assets-by-Category / Assets-by-Location bar charts, drawn on a `GraphicsView` (`Controls/BarChartView.cs`) rather than laid out with data-bound XAML, so rendering can't silently fail the way a bound `CollectionView`/`BoxView` combination can (see "Bugs found" below for why that mattered). Assets-by-Location shows each bar's **full breadcrumb chain** (e.g. "Head Office > Building A > Floor 1 > Room 101 > Rack 1 > Shelf A"), not just the leaf location name — the label is drawn above its bar and word-wraps up to 3 lines so long chains stay readable on any screen width.
 - Asset CRUD (card-based list with status-colored pills and a verified badge), search/filter, dynamic category properties, QR generation, verification workflow with history log
 - Location tree (6-level max, enforced), search, expand/collapse, **add-child directly from any node** in the tree (shows the resulting level before saving), add-root
 - Asset-to-location assignment restricted to **exactly Level 6** locations (the deepest allowed), shown with a full breadcrumb chain (e.g. "Head Office > Building A > Floor 1 > Room 101 > Rack 1 > Shelf A"). A branch that hasn't been built out to Level 6 yet simply won't appear as an option — the Asset page shows an explicit warning when there are none.
@@ -82,7 +84,7 @@ The SQLite database file is created at `FileSystem.AppDataDirectory/sewarural.db
 - **Toast notifications** on every save, delete, verify, login, and report action (success and failure)
 - Branding pulled from the actual Sewa Rural diya logo: maroon/gold palette, app icon, splash screen, login page, and flyout header all use it; typeface is Poppins
 - **Icons throughout**: flyout menu items, toolbar Add/Print buttons, the Location tree's Add/Edit row actions, and primary action buttons (Save/Delete/Verify/Logout/Sign In) all use Google's Material Icons font (`Controls/IconGlyphs.cs`), not text-only
-- 21 passing unit tests: repository CRUD, location hierarchy, auth/session lifecycle, user-level vs. role-level menu rights precedence, PDF generation (including both verification reports), and the location-verification data flow
+- 25 passing unit tests: repository CRUD, location hierarchy, location breadcrumb-chain building, auth/session lifecycle, user-level vs. role-level menu rights precedence, PDF generation (including both verification reports), and the location-verification data flow
 
 ### Not yet built
 - Location Summary / Missing Asset reports, Excel export
@@ -107,3 +109,4 @@ The SQLite database file is created at `FileSystem.AppDataDirectory/sewarural.db
 - **Raw Unicode/Private-Use-Area characters get mangled when written to files in this environment**: discovered while building `IconGlyphs.cs` — typing literal glyph characters directly resulted in double-UTF-8-encoded mojibake on disk. Worked around by writing `\uXXXX` C# escape sequences (plain ASCII) instead, generated via a small PowerShell script rather than typed directly, to guarantee the exact bytes that end up in the file.
 - **`SearchablePicker` was rewritten entirely (third time's the charm)**: after the `CollectionView.SelectionChanged` fix still produced "getting error" reports for asset/location creation, rather than keep patching a component built around `Shell.Navigation.PushModalAsync` — a separate page, a cross-page `TaskCompletionSource`, and Shell's back-button handling all interacting — the control was rebuilt to never leave the current page at all. Tapping the field now just expands a search box and a *height-bounded* `CollectionView` directly beneath it, inside the same `ContentView`. No navigation stack, no modal lifecycle, no cross-page state — there's structurally much less left to go wrong.
 - **`BarChartView` (the dashboard chart's second implementation) never updated after its first render**: its `ItemsSource` change handler checked `if (items is INotifyCollectionChanged)` — but `items` was the result of `.ToList()`, and `List<T>` never implements that interface, regardless of what the source collection was. The subscription was dead code; the chart only ever showed whatever was in the `ObservableCollection` at the exact moment of initial binding (typically empty, since that happens before the ViewModel's `LoadAsync` populates it). Fixed by checking the actual bound `newValue`/`oldValue` instead of a snapshot copy of it.
+- **Login card and Dashboard stat cards looked cramped on narrow phones**: the Login page's `Frame` used `HorizontalOptions="Center"` with no fixed width, and `Entry` only declares a `MinimumWidthRequest` — with no explicit width to fill to, the `Frame` shrink-wrapped to a narrow box instead of using the available screen width. Fixed by switching it to `HorizontalOptions="Fill"` (still capped by `MaximumWidthRequest="380"` on wider screens, where MAUI centers a filled-but-capped view automatically). The Dashboard's 4 stat cards were in a single `*,*,*,*` row, which squeezed labels like "Pending Verification" onto phone-width screens; changed to a 2x2 grid instead.

@@ -11,6 +11,8 @@ namespace SewaRuralAM.App.ViewModels;
 public partial class AssetListViewModel : BaseViewModel
 {
     private readonly IUnitOfWork _unitOfWork;
+    private readonly IMenuAccessService _menuAccessService;
+    private readonly IToastService _toastService;
     private List<Asset> _allAssets = new();
 
     [ObservableProperty]
@@ -19,11 +21,19 @@ public partial class AssetListViewModel : BaseViewModel
     [ObservableProperty]
     private string filter = string.Empty;
 
+    [ObservableProperty]
+    private bool canAdd;
+
+    [ObservableProperty]
+    private bool canPrint;
+
     public ObservableCollection<Asset> Assets { get; } = new();
 
-    public AssetListViewModel(IUnitOfWork unitOfWork)
+    public AssetListViewModel(IUnitOfWork unitOfWork, IMenuAccessService menuAccessService, IToastService toastService)
     {
         _unitOfWork = unitOfWork;
+        _menuAccessService = menuAccessService;
+        _toastService = toastService;
         Title = "Assets";
     }
 
@@ -34,6 +44,11 @@ public partial class AssetListViewModel : BaseViewModel
         try
         {
             IsBusy = true;
+
+            var rights = await _menuAccessService.GetRightsAsync("AssetListPage");
+            CanAdd = rights.CanAdd;
+            CanPrint = rights.CanPrint || rights.CanQrPrint;
+
             _allAssets = await _unitOfWork.Assets.Query()
                 .Include(a => a.AssetCategory)
                 .ToListAsync();
@@ -79,10 +94,24 @@ public partial class AssetListViewModel : BaseViewModel
     }
 
     [RelayCommand]
-    private static async Task AddAssetAsync() =>
+    private async Task AddAssetAsync()
+    {
+        if (!CanAdd)
+        {
+            _toastService.Show("You don't have permission to add assets.", ToastKind.Error);
+            return;
+        }
         await Shell.Current.GoToAsync($"{nameof(Views.AssetDetailPage)}?assetId=0");
+    }
 
     [RelayCommand]
-    private static async Task OpenQrPrintAsync() =>
+    private async Task OpenQrPrintAsync()
+    {
+        if (!CanPrint)
+        {
+            _toastService.Show("You don't have permission to print QR codes.", ToastKind.Error);
+            return;
+        }
         await Shell.Current.GoToAsync(nameof(Views.AssetQrPrintPage));
+    }
 }

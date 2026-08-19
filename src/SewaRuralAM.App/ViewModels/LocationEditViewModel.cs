@@ -15,6 +15,7 @@ public partial class LocationEditViewModel : BaseViewModel
     private readonly IUnitOfWork _unitOfWork;
     private readonly IQrCodeService _qrCodeService;
     private readonly IToastService _toastService;
+    private readonly IMenuAccessService _menuAccessService;
 
     [ObservableProperty]
     private int locationId;
@@ -49,21 +50,28 @@ public partial class LocationEditViewModel : BaseViewModel
     [ObservableProperty]
     private string lastVerifiedByName = string.Empty;
 
+    [ObservableProperty]
+    private bool canSave;
+
     public ObservableCollection<Location> ParentOptions { get; } = new();
     public ObservableCollection<LocationVerificationLog> VerificationHistory { get; } = new();
 
     public bool IsNewLocation => LocationId == 0;
 
-    public LocationEditViewModel(IUnitOfWork unitOfWork, IQrCodeService qrCodeService, IToastService toastService)
+    public LocationEditViewModel(IUnitOfWork unitOfWork, IQrCodeService qrCodeService, IToastService toastService, IMenuAccessService menuAccessService)
     {
         _unitOfWork = unitOfWork;
         _qrCodeService = qrCodeService;
         _toastService = toastService;
+        _menuAccessService = menuAccessService;
     }
 
     [RelayCommand]
     private async Task LoadAsync()
     {
+        var rights = await _menuAccessService.GetRightsAsync("LocationTreePage");
+        CanSave = IsNewLocation ? rights.CanAdd : rights.CanEdit;
+
         var allLocations = await _unitOfWork.Locations.FindAsync(l => l.LevelNo < Location.MaxLevel);
 
         ParentOptions.Clear();
@@ -120,6 +128,13 @@ public partial class LocationEditViewModel : BaseViewModel
     [RelayCommand]
     private async Task SaveAsync()
     {
+        if (!CanSave)
+        {
+            ErrorMessage = "You don't have permission to save this location.";
+            _toastService.Show(ErrorMessage, ToastKind.Error);
+            return;
+        }
+
         if (string.IsNullOrWhiteSpace(LocationCode) || string.IsNullOrWhiteSpace(LocationName))
         {
             ErrorMessage = "Location code and name are required.";

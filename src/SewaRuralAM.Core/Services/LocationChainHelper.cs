@@ -1,7 +1,10 @@
-using Location = SewaRuralAM.Core.Entities.Location;
+using SewaRuralAM.Core.Entities;
 
-namespace SewaRuralAM.App.ViewModels;
+namespace SewaRuralAM.Core.Services;
 
+// Pure, dependency-free location-hierarchy logic (no MAUI/EF dependency) so it's directly
+// unit-testable and shared by every ViewModel that needs to render a full breadcrumb chain,
+// e.g. "Head Office > Building A > Floor 1 > Room 101 > Rack 1 > Shelf A".
 public static class LocationChainHelper
 {
     public static Dictionary<int, Location> ToLookup(IEnumerable<Location> allLocations) =>

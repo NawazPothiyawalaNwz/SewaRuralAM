@@ -9,16 +9,26 @@ namespace SewaRuralAM.App.ViewModels;
 public partial class LocationTreeViewModel : BaseViewModel
 {
     private readonly IUnitOfWork _unitOfWork;
+    private readonly IMenuAccessService _menuAccessService;
+    private readonly IToastService _toastService;
     private List<LocationNode> _roots = new();
 
     [ObservableProperty]
     private string searchText = string.Empty;
 
+    [ObservableProperty]
+    private bool canAdd;
+
+    [ObservableProperty]
+    private bool canPrint;
+
     public ObservableCollection<LocationNode> VisibleNodes { get; } = new();
 
-    public LocationTreeViewModel(IUnitOfWork unitOfWork)
+    public LocationTreeViewModel(IUnitOfWork unitOfWork, IMenuAccessService menuAccessService, IToastService toastService)
     {
         _unitOfWork = unitOfWork;
+        _menuAccessService = menuAccessService;
+        _toastService = toastService;
         Title = "Locations";
     }
 
@@ -29,6 +39,10 @@ public partial class LocationTreeViewModel : BaseViewModel
         try
         {
             IsBusy = true;
+
+            var rights = await _menuAccessService.GetRightsAsync("LocationTreePage");
+            CanAdd = rights.CanAdd;
+            CanPrint = rights.CanPrint || rights.CanQrPrint;
 
             var locations = await _unitOfWork.Locations.GetAllAsync();
             var nodesById = locations.ToDictionary(l => l.Id, l => new LocationNode(l));
@@ -105,13 +119,26 @@ public partial class LocationTreeViewModel : BaseViewModel
     }
 
     [RelayCommand]
-    private static async Task AddLocationAsync() =>
+    private async Task AddLocationAsync()
+    {
+        if (!CanAdd)
+        {
+            _toastService.Show("You don't have permission to add locations.", ToastKind.Error);
+            return;
+        }
         await Shell.Current.GoToAsync($"{nameof(Views.LocationEditPage)}?locationId=0");
+    }
 
     [RelayCommand]
-    private static async Task AddChildLocationAsync(LocationNode node)
+    private async Task AddChildLocationAsync(LocationNode node)
     {
         if (node is null) return;
+
+        if (!CanAdd)
+        {
+            _toastService.Show("You don't have permission to add locations.", ToastKind.Error);
+            return;
+        }
         await Shell.Current.GoToAsync($"{nameof(Views.LocationEditPage)}?locationId=0&parentId={node.Location.Id}");
     }
 
@@ -123,6 +150,13 @@ public partial class LocationTreeViewModel : BaseViewModel
     }
 
     [RelayCommand]
-    private static async Task OpenQrPrintAsync() =>
+    private async Task OpenQrPrintAsync()
+    {
+        if (!CanPrint)
+        {
+            _toastService.Show("You don't have permission to print QR codes.", ToastKind.Error);
+            return;
+        }
         await Shell.Current.GoToAsync(nameof(Views.LocationQrPrintPage));
+    }
 }

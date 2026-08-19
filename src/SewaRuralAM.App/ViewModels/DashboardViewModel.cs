@@ -2,6 +2,8 @@ using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using SewaRuralAM.Core.Interfaces;
+using SewaRuralAM.Core.Services;
+using Location = SewaRuralAM.Core.Entities.Location;
 
 namespace SewaRuralAM.App.ViewModels;
 
@@ -42,7 +44,7 @@ public partial class DashboardViewModel : BaseViewModel
             var locations = await _unitOfWork.Locations.GetAllAsync();
 
             TotalAssets = assets.Count;
-            TotalLocations = locations.Count;
+            TotalLocations = locations.Count(l => l.LevelNo == Location.MaxLevel);
             VerifiedAssets = assets.Count(a => a.IsVerified);
             PendingVerification = assets.Count(a => !a.IsVerified);
 
@@ -66,11 +68,12 @@ public partial class DashboardViewModel : BaseViewModel
             }
 
             var mappings = await _unitOfWork.AssetLocationMappings.FindAsync(m => m.IsCurrent);
+            var byId = LocationChainHelper.ToLookup(locations);
             var byLocation = mappings
                 .GroupBy(m => m.LocationId)
                 .Select(g => new ChartItem
                 {
-                    Label = locations.FirstOrDefault(l => l.Id == g.Key)?.LocationName ?? "Unknown",
+                    Label = byId.TryGetValue(g.Key, out var loc) ? LocationChainHelper.BuildChain(loc, byId) : "Unknown",
                     Value = g.Count()
                 })
                 .OrderByDescending(c => c.Value)

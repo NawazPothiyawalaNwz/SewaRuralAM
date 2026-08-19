@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.Input;
 using Microsoft.EntityFrameworkCore;
 using SewaRuralAM.Core.Entities;
 using SewaRuralAM.Core.Interfaces;
+using SewaRuralAM.Core.Services;
 using ZXing.Net.Maui;
 using Location = SewaRuralAM.Core.Entities.Location;
 
@@ -13,6 +14,7 @@ public partial class QrScannerViewModel : BaseViewModel
     private readonly IUnitOfWork _unitOfWork;
     private readonly IAuthService _authService;
     private readonly IToastService _toastService;
+    private readonly IMenuAccessService _menuAccessService;
 
     [ObservableProperty]
     private bool isScanning = true;
@@ -37,11 +39,12 @@ public partial class QrScannerViewModel : BaseViewModel
 
     public bool HasResult => ScannedAsset is not null || ScannedLocation is not null;
 
-    public QrScannerViewModel(IUnitOfWork unitOfWork, IAuthService authService, IToastService toastService)
+    public QrScannerViewModel(IUnitOfWork unitOfWork, IAuthService authService, IToastService toastService, IMenuAccessService menuAccessService)
     {
         _unitOfWork = unitOfWork;
         _authService = authService;
         _toastService = toastService;
+        _menuAccessService = menuAccessService;
         Title = "QR Verification";
     }
 
@@ -121,6 +124,14 @@ public partial class QrScannerViewModel : BaseViewModel
     private async Task ConfirmVerificationAsync()
     {
         if (_authService.CurrentUser is null) return;
+
+        var rights = await _menuAccessService.GetRightsAsync("QrScannerPage");
+        if (!rights.CanEdit)
+        {
+            StatusMessage = "You don't have permission to verify.";
+            _toastService.Show(StatusMessage, ToastKind.Error);
+            return;
+        }
 
         if (ScannedAsset is not null)
         {

@@ -75,4 +75,50 @@ public class MenuRightsServiceTests
 
         Assert.Empty(authorizedMenus);
     }
+
+    [Fact]
+    public async Task GetEffectiveRightsForRoute_ViewOnlyRole_GrantsViewButNotAddOrEdit()
+    {
+        // Mirrors the real-world "Viewer" role: CanView only. Add/Edit/Delete must all come
+        // back false so the App layer's Add/Edit/Delete/Save buttons stay blocked for it.
+        using var factory = new TestDbContextFactory();
+        await using var context = factory.CreateDbContext();
+
+        var role = new Role { RoleName = "Viewer" };
+        context.Roles.Add(role);
+        var user = new User { UserName = "nawaz", FullName = "Nawaz", PasswordHash = "x" };
+        context.Users.Add(user);
+        var menu = new Menu { MenuName = "Assets", Route = "AssetListPage" };
+        context.Menus.Add(menu);
+        await context.SaveChangesAsync();
+
+        context.UserRoles.Add(new UserRole { UserId = user.Id, RoleId = role.Id });
+        context.MenuRights.Add(new MenuRight { MenuId = menu.Id, RoleId = role.Id, CanView = true, CanAdd = false, CanEdit = false, CanDelete = false });
+        await context.SaveChangesAsync();
+
+        var service = new MenuRightsService(context);
+        var rights = await service.GetEffectiveRightsForRouteAsync(user.Id, "AssetListPage");
+
+        Assert.NotNull(rights);
+        Assert.True(rights!.CanView);
+        Assert.False(rights.CanAdd);
+        Assert.False(rights.CanEdit);
+        Assert.False(rights.CanDelete);
+    }
+
+    [Fact]
+    public async Task GetEffectiveRightsForRoute_UnknownRoute_ReturnsNull()
+    {
+        using var factory = new TestDbContextFactory();
+        await using var context = factory.CreateDbContext();
+
+        var user = new User { UserName = "nobody", FullName = "Nobody", PasswordHash = "x" };
+        context.Users.Add(user);
+        await context.SaveChangesAsync();
+
+        var service = new MenuRightsService(context);
+        var rights = await service.GetEffectiveRightsForRouteAsync(user.Id, "NoSuchPage");
+
+        Assert.Null(rights);
+    }
 }

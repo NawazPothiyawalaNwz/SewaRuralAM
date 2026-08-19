@@ -42,6 +42,7 @@ public static class MauiProgram
 
         builder.Services.AddTransient<IUnitOfWork, UnitOfWork>();
         builder.Services.AddTransient<IMenuRightsService, MenuRightsService>();
+        builder.Services.AddTransient<IMenuAccessService, MenuAccessService>();
         builder.Services.AddSingleton<ISessionStore, PreferencesSessionStore>();
         builder.Services.AddSingleton<IAuthService, AuthService>();
         builder.Services.AddSingleton<IQrCodeService, QrCodeService>();

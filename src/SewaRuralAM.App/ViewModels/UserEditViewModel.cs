@@ -12,6 +12,7 @@ public partial class UserEditViewModel : BaseViewModel
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IToastService _toastService;
+    private readonly IMenuAccessService _menuAccessService;
 
     [ObservableProperty]
     private int userId;
@@ -40,19 +41,26 @@ public partial class UserEditViewModel : BaseViewModel
     [ObservableProperty]
     private string errorMessage = string.Empty;
 
+    [ObservableProperty]
+    private bool canSave;
+
     public ObservableCollection<Role> Roles { get; } = new();
 
     public bool IsNewUser => UserId == 0;
 
-    public UserEditViewModel(IUnitOfWork unitOfWork, IToastService toastService)
+    public UserEditViewModel(IUnitOfWork unitOfWork, IToastService toastService, IMenuAccessService menuAccessService)
     {
         _unitOfWork = unitOfWork;
         _toastService = toastService;
+        _menuAccessService = menuAccessService;
     }
 
     [RelayCommand]
     private async Task LoadAsync()
     {
+        var rights = await _menuAccessService.GetRightsAsync("UserListPage");
+        CanSave = IsNewUser ? rights.CanAdd : rights.CanEdit;
+
         Roles.Clear();
         foreach (var role in await _unitOfWork.Roles.GetAllAsync())
             Roles.Add(role);
@@ -82,6 +90,12 @@ public partial class UserEditViewModel : BaseViewModel
     [RelayCommand]
     private async Task SaveAsync()
     {
+        if (!CanSave)
+        {
+            ErrorMessage = "You don't have permission to save this user.";
+            return;
+        }
+
         if (string.IsNullOrWhiteSpace(UserName) || string.IsNullOrWhiteSpace(FullName) || SelectedRole is null)
         {
             ErrorMessage = "User name, full name and role are required.";

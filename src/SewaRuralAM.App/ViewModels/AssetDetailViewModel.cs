@@ -15,6 +15,7 @@ public partial class AssetDetailViewModel : BaseViewModel
     private readonly IQrCodeService _qrCodeService;
     private readonly IAuthService _authService;
     private readonly IToastService _toastService;
+    private readonly IMenuAccessService _menuAccessService;
 
     [ObservableProperty]
     private int assetId;
@@ -76,6 +77,15 @@ public partial class AssetDetailViewModel : BaseViewModel
     [ObservableProperty]
     private bool hasNoLevelSixLocations;
 
+    [ObservableProperty]
+    private bool canSave;
+
+    [ObservableProperty]
+    private bool canEdit;
+
+    [ObservableProperty]
+    private bool canDelete;
+
     public ObservableCollection<AssetCategory> Categories { get; } = new();
     public ObservableCollection<LocationOption> LocationOptions { get; } = new();
     public ObservableCollection<VerificationLog> VerificationHistory { get; } = new();
@@ -83,12 +93,13 @@ public partial class AssetDetailViewModel : BaseViewModel
 
     public bool IsNewAsset => AssetId == 0;
 
-    public AssetDetailViewModel(IUnitOfWork unitOfWork, IQrCodeService qrCodeService, IAuthService authService, IToastService toastService)
+    public AssetDetailViewModel(IUnitOfWork unitOfWork, IQrCodeService qrCodeService, IAuthService authService, IToastService toastService, IMenuAccessService menuAccessService)
     {
         _unitOfWork = unitOfWork;
         _qrCodeService = qrCodeService;
         _authService = authService;
         _toastService = toastService;
+        _menuAccessService = menuAccessService;
     }
 
     [RelayCommand]
@@ -98,6 +109,11 @@ public partial class AssetDetailViewModel : BaseViewModel
         try
         {
             IsBusy = true;
+
+            var rights = await _menuAccessService.GetRightsAsync("AssetListPage");
+            CanSave = IsNewAsset ? rights.CanAdd : rights.CanEdit;
+            CanEdit = rights.CanEdit;
+            CanDelete = rights.CanDelete;
 
             Categories.Clear();
             foreach (var category in await _unitOfWork.AssetCategories.GetAllAsync())
@@ -163,6 +179,12 @@ public partial class AssetDetailViewModel : BaseViewModel
     [RelayCommand]
     private async Task SaveAsync()
     {
+        if (!CanSave)
+        {
+            _toastService.Show("You don't have permission to save this asset.", ToastKind.Error);
+            return;
+        }
+
         if (string.IsNullOrWhiteSpace(AssetCode) || string.IsNullOrWhiteSpace(AssetName) || SelectedCategory is null)
         {
             _toastService.Show("Asset code, name and category are required.", ToastKind.Error);
@@ -242,6 +264,12 @@ public partial class AssetDetailViewModel : BaseViewModel
         if (AssetId == 0 || _authService.CurrentUser is null)
             return;
 
+        if (!CanEdit)
+        {
+            _toastService.Show("You don't have permission to verify assets.", ToastKind.Error);
+            return;
+        }
+
         if (SelectedLocationOption is null)
         {
             _toastService.Show("Assign a location before verifying this asset.", ToastKind.Error);
@@ -272,6 +300,12 @@ public partial class AssetDetailViewModel : BaseViewModel
     private async Task DeleteAsync()
     {
         if (AssetId == 0) return;
+
+        if (!CanDelete)
+        {
+            _toastService.Show("You don't have permission to delete assets.", ToastKind.Error);
+            return;
+        }
 
         var asset = await _unitOfWork.Assets.GetByIdAsync(AssetId);
         if (asset is null) return;

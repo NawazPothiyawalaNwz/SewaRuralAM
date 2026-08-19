@@ -49,7 +49,7 @@
                 </VerticalStackLayout>
             </Frame>
 
-            <Button Text="Save" Command="{Binding SaveCommand}">
+            <Button Text="Save" Command="{Binding SaveCommand}" IsEnabled="{Binding CanSave}">
                 <Button.ImageSource>
                     <FontImageSource FontFamily="MaterialIcons" Glyph="{x:Static controls:IconGlyphs.Save}" Color="White" Size="16" />
                 </Button.ImageSource>

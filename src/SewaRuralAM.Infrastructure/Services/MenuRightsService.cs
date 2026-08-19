@@ -69,4 +69,10 @@ public class MenuRightsService : IMenuRightsService
             .OrderByDescending(r => r.CanEdit)
             .FirstOrDefaultAsync();
     }
+
+    public async Task<MenuRight?> GetEffectiveRightsForRouteAsync(int userId, string route)
+    {
+        var menu = await _context.Menus.FirstOrDefaultAsync(m => m.Route == route && m.IsActive);
+        return menu is null ? null : await GetEffectiveRightsAsync(userId, menu.Id);
+    }
 }

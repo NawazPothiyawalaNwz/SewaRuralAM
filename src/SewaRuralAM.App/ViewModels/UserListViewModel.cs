@@ -11,17 +11,25 @@ public partial class UserListViewModel : BaseViewModel
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IToastService _toastService;
+    private readonly IMenuAccessService _menuAccessService;
     private List<User> _allUsers = new();
 
     [ObservableProperty]
     private string searchText = string.Empty;
 
+    [ObservableProperty]
+    private bool canAdd;
+
+    [ObservableProperty]
+    private bool canEdit;
+
     public ObservableCollection<User> Users { get; } = new();
 
-    public UserListViewModel(IUnitOfWork unitOfWork, IToastService toastService)
+    public UserListViewModel(IUnitOfWork unitOfWork, IToastService toastService, IMenuAccessService menuAccessService)
     {
         _unitOfWork = unitOfWork;
         _toastService = toastService;
+        _menuAccessService = menuAccessService;
         Title = "Users & Roles";
     }
 
@@ -32,6 +40,10 @@ public partial class UserListViewModel : BaseViewModel
         try
         {
             IsBusy = true;
+
+            var rights = await _menuAccessService.GetRightsAsync("UserListPage");
+            CanAdd = rights.CanAdd;
+            CanEdit = rights.CanEdit;
 
             _allUsers = await _unitOfWork.Users.Query()
                 .Include(u => u.UserRoles).ThenInclude(ur => ur.Role)
@@ -74,13 +86,27 @@ public partial class UserListViewModel : BaseViewModel
     }
 
     [RelayCommand]
-    private static async Task AddUserAsync() =>
+    private async Task AddUserAsync()
+    {
+        if (!CanAdd)
+        {
+            _toastService.Show("You don't have permission to add users.", ToastKind.Error);
+            return;
+        }
         await Shell.Current.GoToAsync($"{nameof(Views.UserEditPage)}?userId=0");
+    }
 
     [RelayCommand]
     private async Task ToggleUserActiveAsync(User user)
     {
         if (user is null) return;
+
+        if (!CanEdit)
+        {
+            _toastService.Show("You don't have permission to edit users.", ToastKind.Error);
+            return;
+        }
+
         user.IsActive = !user.IsActive;
         _unitOfWork.Users.Update(user);
         await _unitOfWork.SaveChangesAsync();
