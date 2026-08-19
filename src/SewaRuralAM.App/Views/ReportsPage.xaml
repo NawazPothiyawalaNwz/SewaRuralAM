@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ContentPage
+    x:Class="SewaRuralAM.App.Views.ReportsPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:vm="clr-namespace:SewaRuralAM.App.ViewModels"
+    xmlns:controls="clr-namespace:SewaRuralAM.App.Controls"
+    x:DataType="vm:ReportsViewModel"
+    Title="Reports">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="16" Spacing="14">
+
+            <Frame Style="{StaticResource Card}">
+                <VerticalStackLayout Spacing="10">
+                    <Label Text="Asset Reports" Style="{StaticResource SectionTitle}" />
+                    <Button Text="Generate Asset Register (PDF)" Command="{Binding GenerateAssetRegisterCommand}">
+                        <Button.ImageSource>
+                            <FontImageSource FontFamily="MaterialIcons" Glyph="{x:Static controls:IconGlyphs.PictureAsPdf}" Color="White" Size="16" />
+                        </Button.ImageSource>
+                    </Button>
+                    <Button Text="Asset Verification Report (PDF)" Command="{Binding GenerateAssetVerificationReportCommand}" Style="{StaticResource SecondaryButton}">
+                        <Button.ImageSource>
+                            <FontImageSource FontFamily="MaterialIcons" Glyph="{x:Static controls:IconGlyphs.CheckCircle}" Color="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource PrimaryDark}}" Size="16" />
+                        </Button.ImageSource>
+                    </Button>
+                </VerticalStackLayout>
+            </Frame>
+
+            <Frame Style="{StaticResource Card}">
+                <VerticalStackLayout Spacing="10">
+                    <Label Text="QR Code Printing" Style="{StaticResource SectionTitle}" />
+                    <Label Text="Select multiple assets or locations and export their QR codes as a printable PDF sheet." Style="{StaticResource Caption}" />
+                    <Button Text="Print Asset QR Codes" Command="{Binding OpenAssetQrPrintCommand}" Style="{StaticResource SecondaryButton}">
+                        <Button.ImageSource>
+                            <FontImageSource FontFamily="MaterialIcons" Glyph="{x:Static controls:IconGlyphs.QrCode}" Color="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource PrimaryDark}}" Size="16" />
+                        </Button.ImageSource>
+                    </Button>
+                    <Button Text="Print Location QR Codes" Command="{Binding OpenLocationQrPrintCommand}" Style="{StaticResource SecondaryButton}">
+                        <Button.ImageSource>
+                            <FontImageSource FontFamily="MaterialIcons" Glyph="{x:Static controls:IconGlyphs.QrCode}" Color="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource PrimaryDark}}" Size="16" />
+                        </Button.ImageSource>
+                    </Button>
+                </VerticalStackLayout>
+            </Frame>
+
+            <Frame Style="{StaticResource Card}">
+                <VerticalStackLayout Spacing="8">
+                    <Label Text="Location Reports" Style="{StaticResource SectionTitle}" />
+                    <Button Text="Location Verification Report (PDF)" Command="{Binding GenerateLocationVerificationReportCommand}" Style="{StaticResource SecondaryButton}">
+                        <Button.ImageSource>
+                            <FontImageSource FontFamily="MaterialIcons" Glyph="{x:Static controls:IconGlyphs.CheckCircle}" Color="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource PrimaryDark}}" Size="16" />
+                        </Button.ImageSource>
+                    </Button>
+                    <Label Text="Location Wise Asset Summary — coming soon" Style="{StaticResource Caption}" />
+                </VerticalStackLayout>
+            </Frame>
+
+            <Label Text="{Binding StatusMessage}" Style="{StaticResource StatusMessage}" />
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

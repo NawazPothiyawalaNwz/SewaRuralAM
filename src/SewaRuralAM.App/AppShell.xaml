@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Shell
+    x:Class="SewaRuralAM.App.AppShell"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:views="clr-namespace:SewaRuralAM.App.Views"
+    xmlns:controls="clr-namespace:SewaRuralAM.App.Controls"
+    Title="Sewa Rural Asset Management"
+    FlyoutBehavior="Flyout"
+    FlyoutBackgroundColor="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource Gray950}}">
+
+    <Shell.FlyoutHeader>
+        <VerticalStackLayout Padding="20,32,20,20" Spacing="4" BackgroundColor="Transparent">
+            <Frame WidthRequest="60" HeightRequest="60" HorizontalOptions="Start" Padding="6"
+                   CornerRadius="14" HasShadow="False" BorderColor="Transparent" BackgroundColor="#FFFDF6">
+                <Image Source="logo.png" Aspect="AspectFit" />
+            </Frame>
+            <Label Text="Sewa Rural" TextColor="White" FontFamily="PoppinsBold" FontSize="19" Margin="0,12,0,0" />
+            <Label Text="Asset Management" TextColor="#E7C7A9" FontSize="12" />
+        </VerticalStackLayout>
+    </Shell.FlyoutHeader>
+
+    <Shell.FlyoutFooter>
+        <VerticalStackLayout Padding="16" Spacing="10" BackgroundColor="#4A1420">
+            <HorizontalStackLayout Spacing="10">
+                <Frame WidthRequest="38" HeightRequest="38" Padding="0" CornerRadius="19" HasShadow="False"
+                       BorderColor="Transparent" BackgroundColor="#C77D2E" VerticalOptions="Center">
+                    <Label x:Name="UserInitialsLabel" Text="?" TextColor="White" FontFamily="PoppinsSemiBold" FontSize="14"
+                           HorizontalOptions="Center" VerticalOptions="Center" HorizontalTextAlignment="Center" />
+                </Frame>
+                <VerticalStackLayout VerticalOptions="Center" Spacing="1">
+                    <Label x:Name="UserNameLabel" Text="Not signed in" TextColor="White" FontSize="13" FontFamily="PoppinsSemiBold" LineBreakMode="TailTruncation" />
+                    <Label x:Name="UserRoleLabel" Text="" TextColor="#E7C7A9" FontSize="11" LineBreakMode="TailTruncation" />
+                </VerticalStackLayout>
+            </HorizontalStackLayout>
+            <Button Text="Logout" FontSize="12" Padding="12,8" HorizontalOptions="Fill"
+                    BackgroundColor="#C77D2E" TextColor="White" CornerRadius="8" Clicked="OnLogoutClicked">
+                <Button.ImageSource>
+                    <FontImageSource FontFamily="MaterialIcons" Glyph="{x:Static controls:IconGlyphs.Logout}" Color="White" Size="16" />
+                </Button.ImageSource>
+            </Button>
+        </VerticalStackLayout>
+    </Shell.FlyoutFooter>
+
+    <ShellContent
+        Route="LoginPage"
+        ContentTemplate="{DataTemplate views:LoginPage}"
+        Shell.FlyoutItemIsVisible="False" />
+
+    <FlyoutItem x:Name="DashboardFlyoutItem" Title="Dashboard">
+        <FlyoutItem.Icon>
+            <FontImageSource FontFamily="MaterialIcons" Glyph="{x:Static controls:IconGlyphs.Dashboard}" Color="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource PrimaryDark}}" Size="22" />
+        </FlyoutItem.Icon>
+        <ShellContent Route="DashboardPage" ContentTemplate="{DataTemplate views:DashboardPage}" />
+    </FlyoutItem>
+
+    <FlyoutItem x:Name="AssetsFlyoutItem" Title="Assets">
+        <FlyoutItem.Icon>
+            <FontImageSource FontFamily="MaterialIcons" Glyph="{x:Static controls:IconGlyphs.Inventory}" Color="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource PrimaryDark}}" Size="22" />
+        </FlyoutItem.Icon>
+        <ShellContent Route="AssetListPage" ContentTemplate="{DataTemplate views:AssetListPage}" />
+    </FlyoutItem>
+
+    <FlyoutItem x:Name="LocationsFlyoutItem" Title="Locations">
+        <FlyoutItem.Icon>
+            <FontImageSource FontFamily="MaterialIcons" Glyph="{x:Static controls:IconGlyphs.Place}" Color="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource PrimaryDark}}" Size="22" />
+        </FlyoutItem.Icon>
+        <ShellContent Route="LocationTreePage" ContentTemplate="{DataTemplate views:LocationTreePage}" />
+    </FlyoutItem>
+
+    <FlyoutItem x:Name="QrFlyoutItem" Title="QR Verification">
+        <FlyoutItem.Icon>
+            <FontImageSource FontFamily="MaterialIcons" Glyph="{x:Static controls:IconGlyphs.QrCodeScanner}" Color="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource PrimaryDark}}" Size="22" />
+        </FlyoutItem.Icon>
+        <ShellContent Route="QrScannerPage" ContentTemplate="{DataTemplate views:QrScannerPage}" />
+    </FlyoutItem>
+
+    <FlyoutItem x:Name="ReportsFlyoutItem" Title="Reports">
+        <FlyoutItem.Icon>
+            <FontImageSource FontFamily="MaterialIcons" Glyph="{x:Static controls:IconGlyphs.Description}" Color="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource PrimaryDark}}" Size="22" />
+        </FlyoutItem.Icon>
+        <ShellContent Route="ReportsPage" ContentTemplate="{DataTemplate views:ReportsPage}" />
+    </FlyoutItem>
+
+    <FlyoutItem x:Name="AdminFlyoutItem" Title="Administration">
+        <FlyoutItem.Icon>
+            <FontImageSource FontFamily="MaterialIcons" Glyph="{x:Static controls:IconGlyphs.AdminPanelSettings}" Color="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource PrimaryDark}}" Size="22" />
+        </FlyoutItem.Icon>
+        <Tab x:Name="UsersTab" Title="Users &amp; Roles">
+            <ShellContent Route="UserListPage" ContentTemplate="{DataTemplate views:UserListPage}" />
+        </Tab>
+        <Tab x:Name="MenuRightsTab" Title="Menu Rights">
+            <ShellContent Route="MenuRightsPage" ContentTemplate="{DataTemplate views:MenuRightsPage}" />
+        </Tab>
+    </FlyoutItem>
+
+</Shell>

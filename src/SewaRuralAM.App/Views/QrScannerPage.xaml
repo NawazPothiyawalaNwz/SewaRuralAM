@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ContentPage
+    x:Class="SewaRuralAM.App.Views.QrScannerPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:vm="clr-namespace:SewaRuralAM.App.ViewModels"
+    xmlns:entities="clr-namespace:SewaRuralAM.Core.Entities;assembly=SewaRuralAM.Core"
+    xmlns:zxing="clr-namespace:ZXing.Net.Maui.Controls;assembly=ZXing.Net.MAUI.Controls"
+    xmlns:controls="clr-namespace:SewaRuralAM.App.Controls"
+    x:DataType="vm:QrScannerViewModel"
+    Title="QR Verification">
+
+    <Grid RowDefinitions="*,Auto" Padding="12" RowSpacing="12">
+
+        <zxing:CameraBarcodeReaderView
+            x:Name="BarcodeReaderView"
+            Grid.Row="0"
+            IsDetecting="{Binding IsScanning}"
+            IsTorchOn="False"
+            IsVisible="{Binding IsScanning}"
+            BarcodesDetected="OnBarcodesDetected" />
+
+        <ScrollView Grid.Row="0" IsVisible="{Binding HasResult}">
+            <VerticalStackLayout Spacing="10">
+
+                <Frame Style="{StaticResource Card}" IsVisible="{Binding ScannedAsset, Converter={StaticResource NullToBoolConverter}}">
+                    <VerticalStackLayout Spacing="6">
+                        <Label Text="Asset" Style="{StaticResource FieldLabel}" />
+                        <Label Text="{Binding ScannedAsset.AssetName}" Style="{StaticResource SectionTitle}" />
+                        <Label Text="{Binding ScannedAsset.AssetCode}" Style="{StaticResource Caption}" />
+                        <Label Text="{Binding CurrentLocationName, StringFormat='Location: {0}'}" FontSize="13" />
+                        <Label Text="{Binding ScannedAsset.Status, StringFormat='Status: {0}'}" FontSize="13" />
+                        <Label Text="{Binding ScannedAsset.LastVerifiedDate, StringFormat='Last verified: {0:yyyy-MM-dd HH:mm}'}" FontSize="13"
+                               IsVisible="{Binding ScannedAsset.IsVerified}" TextColor="{StaticResource Success}" />
+
+                        <Label Text="Properties" Style="{StaticResource FieldLabel}" Margin="0,8,0,0" />
+                        <VerticalStackLayout BindableLayout.ItemsSource="{Binding ScannedAsset.PropertyValues}">
+                            <BindableLayout.ItemTemplate>
+                                <DataTemplate x:DataType="entities:AssetPropertyValue">
+                                    <Label FontSize="12">
+                                        <Label.Text>
+                                            <MultiBinding StringFormat="{}{0}: {1}">
+                                                <Binding Path="AssetPropertyDefinition.PropertyName" />
+                                                <Binding Path="Value" />
+                                            </MultiBinding>
+                                        </Label.Text>
+                                    </Label>
+                                </DataTemplate>
+                            </BindableLayout.ItemTemplate>
+                        </VerticalStackLayout>
+                    </VerticalStackLayout>
+                </Frame>
+
+                <Frame Style="{StaticResource Card}" IsVisible="{Binding ScannedLocation, Converter={StaticResource NullToBoolConverter}}">
+                    <VerticalStackLayout Spacing="6">
+                        <Label Text="Location" Style="{StaticResource FieldLabel}" />
+                        <Label Text="{Binding ScannedLocation.LocationName}" Style="{StaticResource SectionTitle}" />
+                        <Label Text="{Binding ScannedLocationChain}" Style="{StaticResource Caption}" />
+                        <Label Text="{Binding ScannedLocation.LocationCode}" FontSize="13" />
+                        <Label Text="{Binding ScannedLocation.LastVerifiedDate, StringFormat='Last verified: {0:yyyy-MM-dd HH:mm}'}" FontSize="13"
+                               IsVisible="{Binding ScannedLocation.IsVerified}" TextColor="{StaticResource Success}" />
+                    </VerticalStackLayout>
+                </Frame>
+
+                <Frame Style="{StaticResource Card}" IsVisible="{Binding HasResult}">
+                    <VerticalStackLayout Spacing="8">
+                        <Label Text="Remarks" Style="{StaticResource FieldLabel}" />
+                        <Editor Text="{Binding Remarks}" HeightRequest="70" AutoSize="Disabled" />
+
+                        <HorizontalStackLayout Spacing="10" Margin="0,8,0,0">
+                            <Button Text="Mark Verified" Command="{Binding ConfirmVerificationCommand}">
+                                <Button.ImageSource>
+                                    <FontImageSource FontFamily="MaterialIcons" Glyph="{x:Static controls:IconGlyphs.CheckCircle}" Color="White" Size="16" />
+                                </Button.ImageSource>
+                            </Button>
+                            <Button Text="Scan Again" Command="{Binding ResetScanCommand}" Style="{StaticResource SecondaryButton}">
+                                <Button.ImageSource>
+                                    <FontImageSource FontFamily="MaterialIcons" Glyph="{x:Static controls:IconGlyphs.QrCodeScanner}" Color="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource PrimaryDark}}" Size="16" />
+                                </Button.ImageSource>
+                            </Button>
+                        </HorizontalStackLayout>
+                    </VerticalStackLayout>
+                </Frame>
+            </VerticalStackLayout>
+        </ScrollView>
+
+        <Label Grid.Row="1" Text="{Binding StatusMessage}" Style="{StaticResource ErrorMessage}" HorizontalOptions="Center" />
+    </Grid>
+</ContentPage>

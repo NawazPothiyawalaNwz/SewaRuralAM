@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ContentPage
+    x:Class="SewaRuralAM.App.Views.LocationEditPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:vm="clr-namespace:SewaRuralAM.App.ViewModels"
+    xmlns:entities="clr-namespace:SewaRuralAM.Core.Entities;assembly=SewaRuralAM.Core"
+    xmlns:controls="clr-namespace:SewaRuralAM.App.Controls"
+    x:DataType="vm:LocationEditViewModel"
+    Title="{Binding Title}">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="16" Spacing="14">
+
+            <Frame Style="{StaticResource Card}" IsVisible="{Binding QrImage, Converter={StaticResource NullToBoolConverter}}">
+                <VerticalStackLayout Spacing="8" HorizontalOptions="Center">
+                    <Image Source="{Binding QrImage, Converter={StaticResource ByteArrayToImageSourceConverter}}" HeightRequest="140" WidthRequest="140" />
+                    <Label Style="{StaticResource Caption}" TextColor="{StaticResource Success}" HorizontalOptions="Center" IsVisible="{Binding IsVerified}">
+                        <Label.Text>
+                            <MultiBinding StringFormat="Verified {0:yyyy-MM-dd HH:mm} by {1}">
+                                <Binding Path="LastVerifiedDate" />
+                                <Binding Path="LastVerifiedByName" />
+                            </MultiBinding>
+                        </Label.Text>
+                    </Label>
+                </VerticalStackLayout>
+            </Frame>
+
+            <Frame Style="{StaticResource Card}">
+                <VerticalStackLayout Spacing="12">
+                    <VerticalStackLayout Spacing="4">
+                        <Label Text="Location Code" Style="{StaticResource FieldLabel}" />
+                        <Entry Text="{Binding LocationCode}" Placeholder="LOC-HO-BA-F1" />
+                    </VerticalStackLayout>
+
+                    <VerticalStackLayout Spacing="4">
+                        <Label Text="Location Name" Style="{StaticResource FieldLabel}" />
+                        <Entry Text="{Binding LocationName}" Placeholder="e.g. Floor 1" />
+                    </VerticalStackLayout>
+
+                    <VerticalStackLayout Spacing="4">
+                        <Label Text="Parent Location" Style="{StaticResource FieldLabel}" />
+                        <controls:SearchablePicker ItemsSource="{Binding ParentOptions}" DisplayMemberPath="LocationName"
+                                                    SelectedItem="{Binding SelectedParent}" Placeholder="None (root level)" Title="Select Parent Location" />
+                    </VerticalStackLayout>
+
+                    <Label Text="{Binding LevelPreview}" Style="{StaticResource Caption}" />
+                    <Label Text="{Binding ErrorMessage}" Style="{StaticResource ErrorMessage}" IsVisible="{Binding ErrorMessage, Converter={StaticResource StringNotEmptyConverter}}" />
+                </VerticalStackLayout>
+            </Frame>
+
+            <Button Text="Save" Command="{Binding SaveCommand}">
+                <Button.ImageSource>
+                    <FontImageSource FontFamily="MaterialIcons" Glyph="{x:Static controls:IconGlyphs.Save}" Color="White" Size="16" />
+                </Button.ImageSource>
+            </Button>
+
+            <Frame Style="{StaticResource Card}" IsVisible="{Binding IsNewLocation, Converter={StaticResource InvertBoolConverter}}">
+                <VerticalStackLayout Spacing="8">
+                    <Label Text="Verification History" Style="{StaticResource SectionTitle}" />
+                    <VerticalStackLayout BindableLayout.ItemsSource="{Binding VerificationHistory}">
+                        <BindableLayout.ItemTemplate>
+                            <DataTemplate x:DataType="entities:LocationVerificationLog">
+                                <Grid Padding="0,8" ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto">
+                                    <Label Grid.Row="0" Grid.Column="0" Text="{Binding VerifiedByUser.FullName}" FontSize="13" FontAttributes="Bold" />
+                                    <Label Grid.Row="0" Grid.Column="1" Text="{Binding VerifiedDate, StringFormat='{0:yyyy-MM-dd HH:mm}'}" Style="{StaticResource Caption}" />
+                                    <Label Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Text="{Binding Remarks}" Style="{StaticResource Caption}"
+                                           IsVisible="{Binding Remarks, Converter={StaticResource StringNotEmptyConverter}}" />
+                                </Grid>
+                            </DataTemplate>
+                        </BindableLayout.ItemTemplate>
+                    </VerticalStackLayout>
+                    <Label Text="No verification records yet." Style="{StaticResource Caption}" Margin="0,8"
+                           IsVisible="{Binding VerificationHistory.Count, Converter={StaticResource CountIsZeroConverter}}" />
+                </VerticalStackLayout>
+            </Frame>
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

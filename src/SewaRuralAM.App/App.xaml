@@ -1,0 +1,27 @@
+﻿<?xml version = "1.0" encoding = "UTF-8" ?>
+<Application xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:local="clr-namespace:SewaRuralAM.App"
+             xmlns:conv="clr-namespace:SewaRuralAM.App.Converters"
+             x:Class="SewaRuralAM.App.App">
+    <Application.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Resources/Styles/Colors.xaml" />
+                <ResourceDictionary Source="Resources/Styles/Styles.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+
+            <conv:StringNotEmptyConverter x:Key="StringNotEmptyConverter" />
+            <conv:PercentToWidthConverter x:Key="PercentToWidthConverter" />
+            <conv:InvertBoolConverter x:Key="InvertBoolConverter" />
+            <conv:NullToBoolConverter x:Key="NullToBoolConverter" />
+            <conv:ByteArrayToImageSourceConverter x:Key="ByteArrayToImageSourceConverter" />
+            <conv:LevelToIndentConverter x:Key="LevelToIndentConverter" />
+            <conv:ExpandGlyphConverter x:Key="ExpandGlyphConverter" />
+            <conv:CountIsZeroConverter x:Key="CountIsZeroConverter" />
+            <conv:CountIsNotZeroConverter x:Key="CountIsNotZeroConverter" />
+            <conv:AssetStatusToColorConverter x:Key="AssetStatusToColorConverter" />
+            <conv:FirstLetterConverter x:Key="FirstLetterConverter" />
+        </ResourceDictionary>
+    </Application.Resources>
+</Application>

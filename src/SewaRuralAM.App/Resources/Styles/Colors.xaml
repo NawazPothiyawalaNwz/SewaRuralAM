@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<?xaml-comp compile="true" ?>
+<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
+
+    <!-- Brand: from the Sewa Rural diya logo (deep maroon + gold) -->
+    <Color x:Key="Primary">#6B1B2E</Color>
+    <Color x:Key="PrimaryDark">#D98A9E</Color>
+    <Color x:Key="PrimaryDarkText">#2A0D14</Color>
+    <Color x:Key="Secondary">#F4E3C9</Color>
+    <Color x:Key="SecondaryDarkText">#E0A458</Color>
+    <Color x:Key="Tertiary">#C77D2E</Color>
+
+    <!-- Extended brand tokens -->
+    <Color x:Key="Accent">#C77D2E</Color>
+    <Color x:Key="AccentLight">#E0A458</Color>
+
+    <!-- Semantic status colors -->
+    <Color x:Key="Success">#3F7D4F</Color>
+    <Color x:Key="Warning">#C77D2E</Color>
+    <Color x:Key="Danger">#B3261E</Color>
+    <Color x:Key="Info">#6B1B2E</Color>
+    <Color x:Key="Purple">#7C3AED</Color>
+
+    <Color x:Key="White">White</Color>
+    <Color x:Key="Black">Black</Color>
+    <Color x:Key="Magenta">#C77D2E</Color>
+    <Color x:Key="MidnightBlue">#3A0E18</Color>
+    <Color x:Key="OffBlack">#1C0A0F</Color>
+
+    <!-- Neutral scale (warm gray) -->
+    <Color x:Key="Gray50">#FBF8F5</Color>
+    <Color x:Key="Gray100">#F3EDE7</Color>
+    <Color x:Key="Gray200">#E5DAD1</Color>
+    <Color x:Key="Gray300">#CDBBAE</Color>
+    <Color x:Key="Gray400">#A4897B</Color>
+    <Color x:Key="Gray500">#7A6255</Color>
+    <Color x:Key="Gray600">#544138</Color>
+    <Color x:Key="Gray700">#3E2E27</Color>
+    <Color x:Key="Gray800">#2A1E19</Color>
+    <Color x:Key="Gray900">#1C130F</Color>
+    <Color x:Key="Gray950">#120B08</Color>
+
+    <!-- Surface / page tokens -->
+    <Color x:Key="SurfaceLight">White</Color>
+    <Color x:Key="SurfaceAltLight">#FBF8F5</Color>
+    <Color x:Key="PageBackgroundLight">#F3EDE4</Color>
+    <Color x:Key="BorderLight">#E5DAD1</Color>
+    <Color x:Key="TextPrimaryLight">#2A1E19</Color>
+    <Color x:Key="TextSecondaryLight">#7A6255</Color>
+
+    <Color x:Key="SurfaceDark">#241017</Color>
+    <Color x:Key="SurfaceAltDark">#2E151D</Color>
+    <Color x:Key="PageBackgroundDark">#1C0A0F</Color>
+    <Color x:Key="BorderDark">#3E1F28</Color>
+    <Color x:Key="TextPrimaryDark">#F3EDE7</Color>
+    <Color x:Key="TextSecondaryDark">#C9AFA5</Color>
+
+    <SolidColorBrush x:Key="PrimaryBrush" Color="{StaticResource Primary}"/>
+    <SolidColorBrush x:Key="SecondaryBrush" Color="{StaticResource Secondary}"/>
+    <SolidColorBrush x:Key="TertiaryBrush" Color="{StaticResource Tertiary}"/>
+    <SolidColorBrush x:Key="AccentBrush" Color="{StaticResource Accent}"/>
+    <SolidColorBrush x:Key="WhiteBrush" Color="{StaticResource White}"/>
+    <SolidColorBrush x:Key="BlackBrush" Color="{StaticResource Black}"/>
+
+    <SolidColorBrush x:Key="Gray100Brush" Color="{StaticResource Gray100}"/>
+    <SolidColorBrush x:Key="Gray200Brush" Color="{StaticResource Gray200}"/>
+    <SolidColorBrush x:Key="Gray300Brush" Color="{StaticResource Gray300}"/>
+    <SolidColorBrush x:Key="Gray400Brush" Color="{StaticResource Gray400}"/>
+    <SolidColorBrush x:Key="Gray500Brush" Color="{StaticResource Gray500}"/>
+    <SolidColorBrush x:Key="Gray600Brush" Color="{StaticResource Gray600}"/>
+    <SolidColorBrush x:Key="Gray900Brush" Color="{StaticResource Gray900}"/>
+    <SolidColorBrush x:Key="Gray950Brush" Color="{StaticResource Gray950}"/>
+</ResourceDictionary>

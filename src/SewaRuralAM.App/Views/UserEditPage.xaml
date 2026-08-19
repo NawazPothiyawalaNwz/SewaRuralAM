@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ContentPage
+    x:Class="SewaRuralAM.App.Views.UserEditPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:vm="clr-namespace:SewaRuralAM.App.ViewModels"
+    xmlns:controls="clr-namespace:SewaRuralAM.App.Controls"
+    x:DataType="vm:UserEditViewModel"
+    Title="{Binding Title}">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="16" Spacing="14">
+
+            <Frame Style="{StaticResource Card}">
+                <VerticalStackLayout Spacing="12">
+                    <VerticalStackLayout Spacing="4">
+                        <Label Text="User Name" Style="{StaticResource FieldLabel}" />
+                        <Entry Text="{Binding UserName}" Placeholder="jdoe" />
+                    </VerticalStackLayout>
+
+                    <VerticalStackLayout Spacing="4">
+                        <Label Text="Full Name" Style="{StaticResource FieldLabel}" />
+                        <Entry Text="{Binding FullName}" Placeholder="Jane Doe" />
+                    </VerticalStackLayout>
+
+                    <VerticalStackLayout Spacing="4">
+                        <Label Text="Email" Style="{StaticResource FieldLabel}" />
+                        <Entry Text="{Binding Email}" Placeholder="jane@sewarural.org" Keyboard="Email" />
+                    </VerticalStackLayout>
+
+                    <VerticalStackLayout Spacing="4">
+                        <Label Text="Phone Number" Style="{StaticResource FieldLabel}" />
+                        <Entry Text="{Binding PhoneNumber}" Keyboard="Telephone" />
+                    </VerticalStackLayout>
+
+                    <VerticalStackLayout Spacing="4">
+                        <Label Text="Password" Style="{StaticResource FieldLabel}" />
+                        <Entry Text="{Binding Password}" Placeholder="Leave blank to keep current password" IsPassword="True" />
+                    </VerticalStackLayout>
+
+                    <VerticalStackLayout Spacing="4">
+                        <Label Text="Role" Style="{StaticResource FieldLabel}" />
+                        <controls:SearchablePicker ItemsSource="{Binding Roles}" DisplayMemberPath="RoleName"
+                                                    SelectedItem="{Binding SelectedRole}" Placeholder="Select role" Title="Select Role" />
+                    </VerticalStackLayout>
+
+                    <HorizontalStackLayout Spacing="8">
+                        <CheckBox IsChecked="{Binding IsActive}" />
+                        <Label Text="Active" VerticalOptions="Center" />
+                    </HorizontalStackLayout>
+
+                    <Label Text="{Binding ErrorMessage}" Style="{StaticResource ErrorMessage}" IsVisible="{Binding ErrorMessage, Converter={StaticResource StringNotEmptyConverter}}" />
+                </VerticalStackLayout>
+            </Frame>
+
+            <Button Text="Save" Command="{Binding SaveCommand}">
+                <Button.ImageSource>
+                    <FontImageSource FontFamily="MaterialIcons" Glyph="{x:Static controls:IconGlyphs.Save}" Color="White" Size="16" />
+                </Button.ImageSource>
+            </Button>
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

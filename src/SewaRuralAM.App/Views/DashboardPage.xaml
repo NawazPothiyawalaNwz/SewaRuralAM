@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ContentPage
+    x:Class="SewaRuralAM.App.Views.DashboardPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:vm="clr-namespace:SewaRuralAM.App.ViewModels"
+    xmlns:controls="clr-namespace:SewaRuralAM.App.Controls"
+    x:DataType="vm:DashboardViewModel"
+    Title="Dashboard">
+
+    <RefreshView Command="{Binding LoadCommand}" IsRefreshing="{Binding IsBusy}">
+        <ScrollView>
+            <VerticalStackLayout Padding="16" Spacing="16">
+
+                <Grid ColumnDefinitions="*,*,*,*" ColumnSpacing="12" RowSpacing="12">
+                    <Frame Grid.Column="0" Padding="16" CornerRadius="12" BackgroundColor="#2563EB">
+                        <Frame.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding OpenAssetsCommand}" />
+                        </Frame.GestureRecognizers>
+                        <VerticalStackLayout Spacing="4">
+                            <Label Text="Total Assets" TextColor="White" Opacity="0.85" FontSize="13" />
+                            <Label Text="{Binding TotalAssets}" TextColor="White" FontSize="30" FontAttributes="Bold" />
+                        </VerticalStackLayout>
+                    </Frame>
+
+                    <Frame Grid.Column="1" Padding="16" CornerRadius="12" BackgroundColor="#059669">
+                        <Frame.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding OpenLocationsCommand}" />
+                        </Frame.GestureRecognizers>
+                        <VerticalStackLayout Spacing="4">
+                            <Label Text="Total Locations" TextColor="White" Opacity="0.85" FontSize="13" />
+                            <Label Text="{Binding TotalLocations}" TextColor="White" FontSize="30" FontAttributes="Bold" />
+                        </VerticalStackLayout>
+                    </Frame>
+
+                    <Frame Grid.Column="2" Padding="16" CornerRadius="12" BackgroundColor="#7C3AED">
+                        <Frame.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding OpenVerifiedAssetsCommand}" />
+                        </Frame.GestureRecognizers>
+                        <VerticalStackLayout Spacing="4">
+                            <Label Text="Verified Assets" TextColor="White" Opacity="0.85" FontSize="13" />
+                            <Label Text="{Binding VerifiedAssets}" TextColor="White" FontSize="30" FontAttributes="Bold" />
+                        </VerticalStackLayout>
+                    </Frame>
+
+                    <Frame Grid.Column="3" Padding="16" CornerRadius="12" BackgroundColor="#DC2626">
+                        <Frame.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding OpenPendingAssetsCommand}" />
+                        </Frame.GestureRecognizers>
+                        <VerticalStackLayout Spacing="4">
+                            <Label Text="Pending Verification" TextColor="White" Opacity="0.85" FontSize="13" />
+                            <Label Text="{Binding PendingVerification}" TextColor="White" FontSize="30" FontAttributes="Bold" />
+                        </VerticalStackLayout>
+                    </Frame>
+                </Grid>
+
+                <Grid ColumnDefinitions="*,*" ColumnSpacing="12">
+                    <Frame Grid.Column="0" Padding="16" CornerRadius="12">
+                        <VerticalStackLayout Spacing="10">
+                            <Label Text="Assets By Category" FontAttributes="Bold" FontSize="16" />
+                            <controls:BarChartView ItemsSource="{Binding AssetsByCategory}" BarColor="#2563EB"
+                                                    IsVisible="{Binding AssetsByCategory.Count, Converter={StaticResource CountIsNotZeroConverter}}" />
+                            <Label Text="No asset categories yet." Style="{StaticResource Caption}"
+                                   IsVisible="{Binding AssetsByCategory.Count, Converter={StaticResource CountIsZeroConverter}}" />
+                        </VerticalStackLayout>
+                    </Frame>
+
+                    <Frame Grid.Column="1" Padding="16" CornerRadius="12">
+                        <VerticalStackLayout Spacing="10">
+                            <Label Text="Assets By Location" FontAttributes="Bold" FontSize="16" />
+                            <controls:BarChartView ItemsSource="{Binding AssetsByLocation}" BarColor="#059669"
+                                                    IsVisible="{Binding AssetsByLocation.Count, Converter={StaticResource CountIsNotZeroConverter}}" />
+                            <Label Text="No assets assigned to locations yet." Style="{StaticResource Caption}"
+                                   IsVisible="{Binding AssetsByLocation.Count, Converter={StaticResource CountIsZeroConverter}}" />
+                        </VerticalStackLayout>
+                    </Frame>
+                </Grid>
+
+            </VerticalStackLayout>
+        </ScrollView>
+    </RefreshView>
+</ContentPage>

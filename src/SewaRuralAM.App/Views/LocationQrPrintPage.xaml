@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ContentPage
+    x:Class="SewaRuralAM.App.Views.LocationQrPrintPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:vm="clr-namespace:SewaRuralAM.App.ViewModels"
+    x:DataType="vm:LocationQrPrintViewModel"
+    Title="Print Location QR Codes">
+
+    <Grid RowDefinitions="Auto,Auto,*,Auto" Padding="12" RowSpacing="10">
+        <SearchBar Grid.Row="0" Placeholder="Search location" Text="{Binding SearchText}" />
+
+        <Grid Grid.Row="1" ColumnDefinitions="*,Auto,Auto">
+            <Label Grid.Column="0" Text="{Binding SelectedCount, StringFormat='{0} selected'}" VerticalOptions="Center" Style="{StaticResource Caption}" />
+            <Button Grid.Column="1" Text="Select All" Command="{Binding SelectAllVisibleCommand}" Style="{StaticResource TextButton}" />
+            <Button Grid.Column="2" Text="Clear" Command="{Binding ClearSelectionCommand}" Style="{StaticResource TextButton}" />
+        </Grid>
+
+        <RefreshView Grid.Row="2" Command="{Binding LoadCommand}" IsRefreshing="{Binding IsBusy}">
+            <CollectionView ItemsSource="{Binding Rows}" SelectionMode="None">
+                <CollectionView.EmptyView>
+                    <Label Text="No locations found." Style="{StaticResource Caption}" Margin="16" HorizontalOptions="Center" />
+                </CollectionView.EmptyView>
+                <CollectionView.ItemTemplate>
+                    <DataTemplate x:DataType="vm:LocationSelectionRow">
+                        <Frame Style="{StaticResource Card}" Margin="0,3" Padding="12">
+                            <Grid ColumnDefinitions="Auto,*">
+                                <CheckBox Grid.Column="0" IsChecked="{Binding IsSelected}" VerticalOptions="Center" />
+                                <VerticalStackLayout Grid.Column="1" Spacing="2" VerticalOptions="Center">
+                                    <Label Text="{Binding Chain}" FontSize="14" FontAttributes="Bold" LineBreakMode="TailTruncation" />
+                                    <Label Text="{Binding Location.LocationCode}" Style="{StaticResource Caption}" />
+                                </VerticalStackLayout>
+                            </Grid>
+                        </Frame>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+        </RefreshView>
+
+        <VerticalStackLayout Grid.Row="3" Spacing="6">
+            <Button Text="Print Selected QR Codes" Command="{Binding PrintSelectedCommand}" />
+            <Label Text="{Binding StatusMessage}" Style="{StaticResource StatusMessage}" HorizontalOptions="Center" />
+        </VerticalStackLayout>
+    </Grid>
+</ContentPage>

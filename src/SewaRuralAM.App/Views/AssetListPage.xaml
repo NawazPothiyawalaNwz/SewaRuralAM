@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ContentPage
+    x:Class="SewaRuralAM.App.Views.AssetListPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:vm="clr-namespace:SewaRuralAM.App.ViewModels"
+    xmlns:entities="clr-namespace:SewaRuralAM.Core.Entities;assembly=SewaRuralAM.Core"
+    xmlns:controls="clr-namespace:SewaRuralAM.App.Controls"
+    x:DataType="vm:AssetListViewModel"
+    Title="Assets">
+
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Text="Add" Command="{Binding AddAssetCommand}">
+            <ToolbarItem.IconImageSource>
+                <FontImageSource FontFamily="MaterialIcons" Glyph="{x:Static controls:IconGlyphs.Add}" Color="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource PrimaryDark}}" Size="22" />
+            </ToolbarItem.IconImageSource>
+        </ToolbarItem>
+        <ToolbarItem Text="Print QR" Command="{Binding OpenQrPrintCommand}">
+            <ToolbarItem.IconImageSource>
+                <FontImageSource FontFamily="MaterialIcons" Glyph="{x:Static controls:IconGlyphs.QrCode}" Color="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource PrimaryDark}}" Size="22" />
+            </ToolbarItem.IconImageSource>
+        </ToolbarItem>
+    </ContentPage.ToolbarItems>
+
+    <Grid RowDefinitions="Auto,*" Padding="12" RowSpacing="10">
+        <SearchBar Grid.Row="0" Placeholder="Search by name or code" Text="{Binding SearchText}" />
+
+        <RefreshView Grid.Row="1" Command="{Binding LoadCommand}" IsRefreshing="{Binding IsBusy}">
+            <CollectionView ItemsSource="{Binding Assets}" SelectionMode="None">
+                <CollectionView.EmptyView>
+                    <VerticalStackLayout HorizontalOptions="Center" VerticalOptions="Center" Spacing="8" Padding="24">
+                        <Label Text="No assets found." Style="{StaticResource SectionTitle}" HorizontalOptions="Center" />
+                        <Label Text="Tap Add to register your first asset." Style="{StaticResource Caption}" HorizontalOptions="Center" />
+                    </VerticalStackLayout>
+                </CollectionView.EmptyView>
+                <CollectionView.ItemTemplate>
+                    <DataTemplate x:DataType="entities:Asset">
+                        <Frame Style="{StaticResource Card}" Margin="0,4" Padding="0">
+                            <Grid Padding="14,12" ColumnDefinitions="48,*,Auto" ColumnSpacing="12">
+                                <Grid.GestureRecognizers>
+                                    <TapGestureRecognizer
+                                        Command="{Binding Source={RelativeSource AncestorType={x:Type vm:AssetListViewModel}}, Path=OpenAssetCommand}"
+                                        CommandParameter="{Binding .}" />
+                                </Grid.GestureRecognizers>
+
+                                <Frame Grid.Column="0" WidthRequest="48" HeightRequest="48" Padding="0" CornerRadius="12"
+                                       HasShadow="False" BorderColor="Transparent"
+                                       BackgroundColor="{AppThemeBinding Light={StaticResource Secondary}, Dark={StaticResource SurfaceAltDark}}">
+                                    <Label Text="{Binding AssetCategory.CategoryName, Converter={StaticResource FirstLetterConverter}}"
+                                           FontFamily="PoppinsSemiBold" FontSize="19"
+                                           TextColor="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource PrimaryDark}}"
+                                           HorizontalOptions="Center" VerticalOptions="Center" HorizontalTextAlignment="Center" />
+                                </Frame>
+
+                                <VerticalStackLayout Grid.Column="1" Spacing="3" VerticalOptions="Center">
+                                    <Label Text="{Binding AssetName}" Style="{StaticResource SectionTitle}" LineBreakMode="TailTruncation" />
+                                    <HorizontalStackLayout Spacing="8">
+                                        <Label Text="{Binding AssetCode}" Style="{StaticResource Caption}" />
+                                        <Label Text="•" Style="{StaticResource Caption}" />
+                                        <Label Text="{Binding AssetCategory.CategoryName}" Style="{StaticResource Caption}" />
+                                    </HorizontalStackLayout>
+                                </VerticalStackLayout>
+
+                                <VerticalStackLayout Grid.Column="2" Spacing="4" HorizontalOptions="End" VerticalOptions="Center">
+                                    <Border StrokeShape="RoundRectangle 8" StrokeThickness="0"
+                                            BackgroundColor="{Binding Status, Converter={StaticResource AssetStatusToColorConverter}}"
+                                            Padding="10,4">
+                                        <Label Text="{Binding Status}" TextColor="White" FontSize="11" FontFamily="PoppinsSemiBold" />
+                                    </Border>
+                                    <Label Text="✓ Verified" FontSize="10" HorizontalOptions="End"
+                                           TextColor="{StaticResource Success}"
+                                           IsVisible="{Binding IsVerified}" />
+                                </VerticalStackLayout>
+                            </Grid>
+                        </Frame>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+        </RefreshView>
+    </Grid>
+</ContentPage>

@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ContentPage
+    x:Class="SewaRuralAM.App.Views.AssetDetailPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:vm="clr-namespace:SewaRuralAM.App.ViewModels"
+    xmlns:entities="clr-namespace:SewaRuralAM.Core.Entities;assembly=SewaRuralAM.Core"
+    xmlns:controls="clr-namespace:SewaRuralAM.App.Controls"
+    x:DataType="vm:AssetDetailViewModel"
+    Title="{Binding Title}">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="16" Spacing="14">
+
+            <Frame Style="{StaticResource Card}" IsVisible="{Binding QrImage, Converter={StaticResource NullToBoolConverter}}">
+                <VerticalStackLayout Spacing="8" HorizontalOptions="Center">
+                    <Image Source="{Binding QrImage, Converter={StaticResource ByteArrayToImageSourceConverter}}" HeightRequest="130" WidthRequest="130" />
+                    <Label Text="{Binding CurrentLocationName, StringFormat='Location: {0}'}" Style="{StaticResource Caption}" HorizontalOptions="Center" />
+                    <Label Style="{StaticResource Caption}" TextColor="{StaticResource Success}" HorizontalOptions="Center" IsVisible="{Binding IsVerified}">
+                        <Label.Text>
+                            <MultiBinding StringFormat="Verified {0:yyyy-MM-dd HH:mm} by {1}">
+                                <Binding Path="LastVerifiedDate" />
+                                <Binding Path="LastVerifiedByName" />
+                            </MultiBinding>
+                        </Label.Text>
+                    </Label>
+                </VerticalStackLayout>
+            </Frame>
+
+            <Frame Style="{StaticResource Card}">
+                <VerticalStackLayout Spacing="12">
+                    <Label Text="Asset Details" Style="{StaticResource SectionTitle}" />
+
+                    <VerticalStackLayout Spacing="4">
+                        <Label Text="Asset Code" Style="{StaticResource FieldLabel}" />
+                        <Entry Text="{Binding AssetCode}" Placeholder="AST-0001" />
+                    </VerticalStackLayout>
+
+                    <VerticalStackLayout Spacing="4">
+                        <Label Text="Asset Name" Style="{StaticResource FieldLabel}" />
+                        <Entry Text="{Binding AssetName}" Placeholder="Asset name" />
+                    </VerticalStackLayout>
+
+                    <VerticalStackLayout Spacing="4">
+                        <Label Text="Category" Style="{StaticResource FieldLabel}" />
+                        <controls:SearchablePicker ItemsSource="{Binding Categories}" DisplayMemberPath="CategoryName"
+                                                    SelectedItem="{Binding SelectedCategory}" Placeholder="Select category" Title="Select Category" />
+                    </VerticalStackLayout>
+
+                    <VerticalStackLayout Spacing="4">
+                        <Label Text="Location (Level 6 only)" Style="{StaticResource FieldLabel}" />
+                        <controls:SearchablePicker ItemsSource="{Binding LocationOptions}" DisplayMemberPath="Chain"
+                                                    SelectedItem="{Binding SelectedLocationOption}" Placeholder="Select location" Title="Select Location" />
+                        <Label Text="No Level 6 locations exist yet. Build a location chain down to Level 6 under Locations first."
+                               Style="{StaticResource Caption}" TextColor="{StaticResource Warning}"
+                               IsVisible="{Binding HasNoLevelSixLocations}" />
+                    </VerticalStackLayout>
+
+                    <Grid ColumnDefinitions="*,*" ColumnSpacing="12">
+                        <VerticalStackLayout Grid.Column="0" Spacing="4">
+                            <Label Text="Brand" Style="{StaticResource FieldLabel}" />
+                            <Entry Text="{Binding Brand}" />
+                        </VerticalStackLayout>
+                        <VerticalStackLayout Grid.Column="1" Spacing="4">
+                            <Label Text="Model" Style="{StaticResource FieldLabel}" />
+                            <Entry Text="{Binding Model}" />
+                        </VerticalStackLayout>
+                    </Grid>
+
+                    <VerticalStackLayout Spacing="4">
+                        <Label Text="Serial Number" Style="{StaticResource FieldLabel}" />
+                        <Entry Text="{Binding SerialNumber}" />
+                    </VerticalStackLayout>
+
+                    <Grid ColumnDefinitions="*,*" ColumnSpacing="12">
+                        <VerticalStackLayout Grid.Column="0" Spacing="4">
+                            <Label Text="Purchase Date" Style="{StaticResource FieldLabel}" />
+                            <DatePicker Date="{Binding PurchaseDate}" />
+                        </VerticalStackLayout>
+                        <VerticalStackLayout Grid.Column="1" Spacing="4">
+                            <Label Text="Purchase Cost" Style="{StaticResource FieldLabel}" />
+                            <Entry Text="{Binding PurchaseCost}" Keyboard="Numeric" />
+                        </VerticalStackLayout>
+                    </Grid>
+
+                    <VerticalStackLayout Spacing="4">
+                        <Label Text="Vendor" Style="{StaticResource FieldLabel}" />
+                        <Entry Text="{Binding Vendor}" />
+                    </VerticalStackLayout>
+
+                    <VerticalStackLayout Spacing="4">
+                        <Label Text="Status" Style="{StaticResource FieldLabel}" />
+                        <Picker ItemsSource="{Binding StatusOptions}" SelectedItem="{Binding Status}" />
+                    </VerticalStackLayout>
+
+                    <VerticalStackLayout Spacing="4">
+                        <Label Text="Description" Style="{StaticResource FieldLabel}" />
+                        <Editor Text="{Binding Description}" HeightRequest="80" AutoSize="Disabled" />
+                    </VerticalStackLayout>
+                </VerticalStackLayout>
+            </Frame>
+
+            <HorizontalStackLayout Spacing="10">
+                <Button Text="Save" Command="{Binding SaveCommand}">
+                    <Button.ImageSource>
+                        <FontImageSource FontFamily="MaterialIcons" Glyph="{x:Static controls:IconGlyphs.Save}" Color="White" Size="16" />
+                    </Button.ImageSource>
+                </Button>
+                <Button Text="Verify" Command="{Binding VerifyCommand}" Style="{StaticResource SecondaryButton}"
+                        IsVisible="{Binding IsNewAsset, Converter={StaticResource InvertBoolConverter}}">
+                    <Button.ImageSource>
+                        <FontImageSource FontFamily="MaterialIcons" Glyph="{x:Static controls:IconGlyphs.CheckCircle}" Color="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource PrimaryDark}}" Size="16" />
+                    </Button.ImageSource>
+                </Button>
+                <Button Text="Delete" Command="{Binding DeleteCommand}" Style="{StaticResource DangerButton}"
+                        IsVisible="{Binding IsNewAsset, Converter={StaticResource InvertBoolConverter}}">
+                    <Button.ImageSource>
+                        <FontImageSource FontFamily="MaterialIcons" Glyph="{x:Static controls:IconGlyphs.Delete}" Color="White" Size="16" />
+                    </Button.ImageSource>
+                </Button>
+            </HorizontalStackLayout>
+
+            <Frame Style="{StaticResource Card}" IsVisible="{Binding IsNewAsset, Converter={StaticResource InvertBoolConverter}}">
+                <VerticalStackLayout Spacing="8">
+                    <Label Text="Verification History" Style="{StaticResource SectionTitle}" />
+                    <VerticalStackLayout BindableLayout.ItemsSource="{Binding VerificationHistory}">
+                        <BindableLayout.ItemTemplate>
+                            <DataTemplate x:DataType="entities:VerificationLog">
+                                <Grid Padding="0,8" ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto">
+                                    <Label Grid.Row="0" Grid.Column="0" Text="{Binding VerifiedByUser.FullName}" FontSize="13" FontAttributes="Bold" />
+                                    <Label Grid.Row="0" Grid.Column="1" Text="{Binding VerifiedDate, StringFormat='{0:yyyy-MM-dd HH:mm}'}" Style="{StaticResource Caption}" />
+                                    <Label Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Text="{Binding Remarks}" Style="{StaticResource Caption}"
+                                           IsVisible="{Binding Remarks, Converter={StaticResource StringNotEmptyConverter}}" />
+                                </Grid>
+                            </DataTemplate>
+                        </BindableLayout.ItemTemplate>
+                    </VerticalStackLayout>
+                    <Label Text="No verification records yet." Style="{StaticResource Caption}" Margin="0,8"
+                           IsVisible="{Binding VerificationHistory.Count, Converter={StaticResource CountIsZeroConverter}}" />
+                </VerticalStackLayout>
+            </Frame>
+
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ContentPage
+    x:Class="SewaRuralAM.App.Views.MenuRightsPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:vm="clr-namespace:SewaRuralAM.App.ViewModels"
+    xmlns:controls="clr-namespace:SewaRuralAM.App.Controls"
+    x:DataType="vm:MenuRightsViewModel"
+    Title="Menu Rights">
+
+    <Grid RowDefinitions="Auto,Auto,*,Auto" Padding="16" RowSpacing="12">
+
+        <HorizontalStackLayout Grid.Row="0" Spacing="8">
+            <Button Text="By Role" Command="{Binding SetModeCommand}" CommandParameter="role"
+                    IsEnabled="{Binding IsRoleMode, Converter={StaticResource InvertBoolConverter}}" />
+            <Button Text="By User" Command="{Binding SetModeCommand}" CommandParameter="user"
+                    Style="{StaticResource SecondaryButton}" IsEnabled="{Binding IsRoleMode}" />
+        </HorizontalStackLayout>
+
+        <Frame Grid.Row="1" Style="{StaticResource Card}" Padding="14">
+            <VerticalStackLayout Spacing="4">
+                <Label Text="Role" Style="{StaticResource FieldLabel}" IsVisible="{Binding IsRoleMode}" />
+                <controls:SearchablePicker ItemsSource="{Binding Roles}" DisplayMemberPath="RoleName"
+                                            SelectedItem="{Binding SelectedRole}" Placeholder="Select role" Title="Select Role"
+                                            IsVisible="{Binding IsRoleMode}" />
+
+                <Label Text="User" Style="{StaticResource FieldLabel}" IsVisible="{Binding IsRoleMode, Converter={StaticResource InvertBoolConverter}}" />
+                <controls:SearchablePicker ItemsSource="{Binding Users}" DisplayMemberPath="FullName"
+                                            SelectedItem="{Binding SelectedUser}" Placeholder="Select user" Title="Select User"
+                                            IsVisible="{Binding IsRoleMode, Converter={StaticResource InvertBoolConverter}}" />
+
+                <Label Text="User-level rights override that user's role rights for the same menu." Style="{StaticResource Caption}"
+                       IsVisible="{Binding IsRoleMode, Converter={StaticResource InvertBoolConverter}}" />
+            </VerticalStackLayout>
+        </Frame>
+
+        <CollectionView Grid.Row="2" ItemsSource="{Binding Rows}">
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="vm:MenuRightRow">
+                    <Frame Style="{StaticResource Card}" Margin="0,4">
+                        <VerticalStackLayout Spacing="8">
+                            <Label Text="{Binding Menu.MenuName}" Style="{StaticResource SectionTitle}" />
+                            <FlexLayout Wrap="Wrap" JustifyContent="Start">
+                                <HorizontalStackLayout Margin="0,0,16,6" Spacing="6">
+                                    <CheckBox IsChecked="{Binding CanView}" />
+                                    <Label Text="View" VerticalOptions="Center" />
+                                </HorizontalStackLayout>
+                                <HorizontalStackLayout Margin="0,0,16,6" Spacing="6">
+                                    <CheckBox IsChecked="{Binding CanAdd}" />
+                                    <Label Text="Add" VerticalOptions="Center" />
+                                </HorizontalStackLayout>
+                                <HorizontalStackLayout Margin="0,0,16,6" Spacing="6">
+                                    <CheckBox IsChecked="{Binding CanEdit}" />
+                                    <Label Text="Edit" VerticalOptions="Center" />
+                                </HorizontalStackLayout>
+                                <HorizontalStackLayout Margin="0,0,16,6" Spacing="6">
+                                    <CheckBox IsChecked="{Binding CanDelete}" />
+                                    <Label Text="Delete" VerticalOptions="Center" />
+                                </HorizontalStackLayout>
+                                <HorizontalStackLayout Margin="0,0,16,6" Spacing="6">
+                                    <CheckBox IsChecked="{Binding CanPrint}" />
+                                    <Label Text="Print" VerticalOptions="Center" />
+                                </HorizontalStackLayout>
+                                <HorizontalStackLayout Margin="0,0,16,6" Spacing="6">
+                                    <CheckBox IsChecked="{Binding CanExport}" />
+                                    <Label Text="Export" VerticalOptions="Center" />
+                                </HorizontalStackLayout>
+                                <HorizontalStackLayout Margin="0,0,16,6" Spacing="6">
+                                    <CheckBox IsChecked="{Binding CanQrPrint}" />
+                                    <Label Text="QR Print" VerticalOptions="Center" />
+                                </HorizontalStackLayout>
+                            </FlexLayout>
+                        </VerticalStackLayout>
+                    </Frame>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+
+        <VerticalStackLayout Grid.Row="3" Spacing="6">
+            <Button Text="Save Rights" Command="{Binding SaveCommand}">
+                <Button.ImageSource>
+                    <FontImageSource FontFamily="MaterialIcons" Glyph="{x:Static controls:IconGlyphs.Save}" Color="White" Size="16" />
+                </Button.ImageSource>
+            </Button>
+            <Label Text="{Binding StatusMessage}" Style="{StaticResource StatusMessage}" HorizontalOptions="Center" />
+        </VerticalStackLayout>
+    </Grid>
+</ContentPage>
